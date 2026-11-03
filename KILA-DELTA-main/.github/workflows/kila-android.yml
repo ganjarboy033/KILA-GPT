@@ -1,0 +1,145 @@
+
+name: KILA Android
+
+# Jalankan manual (Actions → KILA Android → Run workflow) atau push tag "kila-v*".
+# Hasil: artifact "kila-apks" berisi APK per-ABI (arm64-v8a untuk hampir semua HP modern).
+on:
+  workflow_dispatch:
+  push:
+    tags: ['kila-v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kila-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FFMPEG_BUILD_REPO: ymusic-io/ffmpeg-build
+  FFMPEG_BUILD_REF: d79bfb002882b75dd8d2255873d3e5e2dc938f4a
+  NDK_VERSION: 28.2.13676358
+
+jobs:
+  ffmpeg:
+    name: ffmpeg ${{ matrix.abi }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        abi: [armeabi-v7a, arm64-v8a, x86, x86_64]
+    steps:
+      - id: cache
+        uses: actions/cache@v4
+        with:
+          path: ffmpeg-build/out/android-${{ matrix.abi }}
+          key: ffmpeg-android-${{ matrix.abi }}-${{ env.FFMPEG_BUILD_REF }}-ndk${{ env.NDK_VERSION }}
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.FFMPEG_BUILD_REPO }}
+          ref: ${{ env.FFMPEG_BUILD_REF }}
+          path: ffmpeg-build
+          submodules: recursive
+          fetch-depth: 1
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        name: Install NDK
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;$NDK_VERSION" > /dev/null
+          echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
+
+      - if: steps.cache.outputs.cache-hit != 'true'
+        name: Build ffmpeg
+        working-directory: ffmpeg-build
+        run: |
+          sudo apt-get update && sudo apt-get install -y nasm automake autoconf libtool pkg-config patchelf
+          scripts/build-android.sh "${{ matrix.abi }}" || {
+            for log in .deps-android-${{ matrix.abi }}/.build/*/config.log; do
+              [ -f "$log" ] && { echo "::group::$log"; tail -n 80 "$log"; echo "::endgroup::"; }
+            done
+            exit 1
+          }
+
+  android:
+    name: Build KILA APK
+    needs: ffmpeg
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: kila
+
+      - name: Restore ffmpeg android-armeabi-v7a
+        uses: actions/cache/restore@v4
+        with:
+          path: ffmpeg-build/out/android-armeabi-v7a
+          key: ffmpeg-android-armeabi-v7a-${{ env.FFMPEG_BUILD_REF }}-ndk${{ env.NDK_VERSION }}
+          fail-on-cache-miss: true
+      - name: Restore ffmpeg android-arm64-v8a
+        uses: actions/cache/restore@v4
+        with:
+          path: ffmpeg-build/out/android-arm64-v8a
+          key: ffmpeg-android-arm64-v8a-${{ env.FFMPEG_BUILD_REF }}-ndk${{ env.NDK_VERSION }}
+          fail-on-cache-miss: true
+      - name: Restore ffmpeg android-x86
+        uses: actions/cache/restore@v4
+        with:
+          path: ffmpeg-build/out/android-x86
+          key: ffmpeg-android-x86-${{ env.FFMPEG_BUILD_REF }}-ndk${{ env.NDK_VERSION }}
+          fail-on-cache-miss: true
+      - name: Restore ffmpeg android-x86_64
+        uses: actions/cache/restore@v4
+        with:
+          path: ffmpeg-build/out/android-x86_64
+          key: ffmpeg-android-x86_64-${{ env.FFMPEG_BUILD_REF }}-ndk${{ env.NDK_VERSION }}
+          fail-on-cache-miss: true
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Install NDK
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;$NDK_VERSION" > /dev/null
+          echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
+
+      # Modul Mori (Capacitor): pasang dependensi npm, sinkronkan aset web + daftar plugin,
+      # lalu rapikan agar cocok dengan AGP 9 / struktur monorepo KILA.
+      - name: Siapkan modul Mori
+        working-directory: kila
+        run: bash mori/scripts/prepare-mori.sh
+
+      # Keystore otomatis (disimpan di cache agar tanda tangan konsisten antar-build = bisa update).
+      - name: Keystore
+        id: ks
+        uses: actions/cache@v4
+        with:
+          path: kila-release.jks
+          key: kila-keystore-v1
+      - name: Buat keystore bila belum ada
+        run: |
+          [ -f kila-release.jks ] || keytool -genkeypair -v -keystore kila-release.jks -alias kila \
+            -keyalg RSA -keysize 2048 -validity 36500 -storepass kilamod123 -keypass kilamod123 \
+            -dname "CN=KILA, O=Gandzar, C=ID"
+          echo "YMUSIC_ANDROID_STORE_FILE=$PWD/kila-release.jks" >> "$GITHUB_ENV"
+          echo "YMUSIC_ANDROID_STORE_PASSWORD=kilamod123" >> "$GITHUB_ENV"
+          echo "YMUSIC_ANDROID_KEY_ALIAS=kila" >> "$GITHUB_ENV"
+          echo "YMUSIC_ANDROID_KEY_PASSWORD=kilamod123" >> "$GITHUB_ENV"
+
+      - name: Build APK rilis
+        working-directory: kila
+        run: ./gradlew -Pproduction=true :androidApp:assembleRelease :engine-js:closureJs :engine-js:closurePlayerJs
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kila-apks
+          path: kila/androidApp/build/outputs/apk/release/*.apk
+          if-no-files-found: error

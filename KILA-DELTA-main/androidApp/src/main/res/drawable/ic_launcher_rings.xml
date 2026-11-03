@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KILA launcher background: deep indigo with two soft diagonal bands. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:pathData="M0,0 H108 V108 H0 Z" android:fillColor="#111B3D" />
+    <path android:pathData="M0,108 L108,20 V60 L40,108 Z" android:fillColor="#1B2A5E" />
+    <path android:pathData="M0,70 L70,108 H0 Z" android:fillColor="#243B86" />
+</vector>

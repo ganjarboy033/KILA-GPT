@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- KILA logo: indigo disc, delta "A" with a cyan pulse dot. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="192dp"
+    android:height="192dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <path android:pathData="M0,0 H1024 V1024 H0 Z" android:fillColor="#111B3D" />
+    <path android:pathData="M0,1024 L1024,190 V570 L380,1024 Z" android:fillColor="#1B2A5E" />
+    <path android:pathData="M0,664 L664,1024 H0 Z" android:fillColor="#243B86" />
+    <path
+        android:pathData="M512,228 L797,759 L227,759 Z M512,408 L379,655 L645,655 Z"
+        android:fillType="evenOdd"
+        android:fillColor="#FFFFFF" />
+    <path
+        android:pathData="M512,493 m-43,0 a43,43 0 1,0 86,0 a43,43 0 1,0 -86,0 Z"
+        android:fillColor="#22D3EE" />
+</vector>

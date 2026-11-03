@@ -1,0 +1,115 @@
+/* Mori AIXI — palét téma (dipilih lewat html[data-palette]). Warna aksén kustom ditimpa inline oléh themes.js */
+html[data-palette="forest"] {
+  --bg-color: #f1f6ee; --bg-rgb: 241, 246, 238;
+  --surface: #e3ecde; --surface-rgb: 227, 236, 222;
+  --primary: #2f6b3f; --primary-rgb: 47, 107, 63;
+  --on-primary: #f1f6ee;
+  --text-main: #14231a; --text-secondary: #587060;
+}
+html[data-palette="forest"][data-theme="dark"] {
+  --bg-color: #0f1a13; --bg-rgb: 15, 26, 19;
+  --surface: #17261c; --surface-rgb: 23, 38, 28;
+  --primary: #6fd08c; --primary-rgb: 111, 208, 140;
+  --on-primary: #0f1a13;
+  --text-main: #e9f5ec; --text-secondary: #8fae98;
+}
+html[data-palette="priangan"] {
+  --bg-color: #fbf5e4; --bg-rgb: 251, 245, 228;
+  --surface: #f2e8cb; --surface-rgb: 242, 232, 203;
+  --primary: #b8860b; --primary-rgb: 184, 134, 11;
+  --on-primary: #fffaf0;
+  --text-main: #2b2210; --text-secondary: #7c6a3e;
+}
+html[data-palette="priangan"][data-theme="dark"] {
+  --bg-color: #17130a; --bg-rgb: 23, 19, 10;
+  --surface: #231c0e; --surface-rgb: 35, 28, 14;
+  --primary: #e6b94a; --primary-rgb: 230, 185, 74;
+  --on-primary: #17130a;
+  --text-main: #f8efd6; --text-secondary: #b3a275;
+}
+html[data-palette="cyber"] {
+  --bg-color: #eef6fb; --bg-rgb: 238, 246, 251;
+  --surface: #dbe9f3; --surface-rgb: 219, 233, 243;
+  --primary: #c2188a; --primary-rgb: 194, 24, 138;
+  --on-primary: #ffffff;
+  --text-main: #101826; --text-secondary: #4d6178;
+}
+html[data-palette="cyber"][data-theme="dark"] {
+  --bg-color: #0a0b18; --bg-rgb: 10, 11, 24;
+  --surface: #12142b; --surface-rgb: 18, 20, 43;
+  --primary: #00f0ff; --primary-rgb: 0, 240, 255;
+  --on-primary: #06070f;
+  --text-main: #f0f4ff; --text-secondary: #8a93c7;
+}
+html[data-palette="layung"] {
+  --bg-color: #fff3ec; --bg-rgb: 255, 243, 236;
+  --surface: #fde1d1; --surface-rgb: 253, 225, 209;
+  --primary: #d9480f; --primary-rgb: 217, 72, 15;
+  --on-primary: #fff6f0;
+  --text-main: #2a130b; --text-secondary: #8a5a46;
+}
+html[data-palette="layung"][data-theme="dark"] {
+  --bg-color: #1a0e0b; --bg-rgb: 26, 14, 11;
+  --surface: #2a1612; --surface-rgb: 42, 22, 18;
+  --primary: #ff7a59; --primary-rgb: 255, 122, 89;
+  --on-primary: #1a0e0b;
+  --text-main: #ffece4; --text-secondary: #c39384;
+}
+html[data-palette="sagara"] {
+  --bg-color: #eaf3fb; --bg-rgb: 234, 243, 251;
+  --surface: #d4e5f5; --surface-rgb: 212, 229, 245;
+  --primary: #1862b3; --primary-rgb: 24, 98, 179;
+  --on-primary: #f2f8ff;
+  --text-main: #0c1a2b; --text-secondary: #4a6683;
+}
+html[data-palette="sagara"][data-theme="dark"] {
+  --bg-color: #07131f; --bg-rgb: 7, 19, 31;
+  --surface: #0e2236; --surface-rgb: 14, 34, 54;
+  --primary: #4aa8ff; --primary-rgb: 74, 168, 255;
+  --on-primary: #07131f;
+  --text-main: #e6f2ff; --text-secondary: #7fa3c4;
+}
+html[data-palette="amoled"] {
+  --bg-color: #ffffff; --bg-rgb: 255, 255, 255;
+  --surface: #f1f1f1; --surface-rgb: 241, 241, 241;
+  --primary: #111111; --primary-rgb: 17, 17, 17;
+  --on-primary: #ffffff;
+  --text-main: #111111; --text-secondary: #666666;
+}
+html[data-palette="amoled"][data-theme="dark"] {
+  --bg-color: #000000; --bg-rgb: 0, 0, 0;
+  --surface: #0c0c0c; --surface-rgb: 12, 12, 12;
+  --primary: #ffffff; --primary-rgb: 255, 255, 255;
+  --on-primary: #000000;
+  --text-main: #f5f5f5; --text-secondary: #8a8a8a;
+}
+
+body { transition: background-color .35s ease, color .35s ease; }
+.mori-theme-card { padding: 14px 16px; }
+.mori-theme-card h4 { margin: 0 0 10px; font-size: .95rem; }
+.mori-theme-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.mori-swatch { min-height: 64px; border-radius: 12px; border: 2px solid transparent; cursor: pointer; padding: 8px; text-align: left;
+  display: flex; flex-direction: column; justify-content: space-between; font: inherit; font-size: .72rem; color: inherit;
+  background: var(--surface); box-shadow: inset 0 0 0 1px rgba(128,128,128,.25); -webkit-tap-highlight-color: transparent; }
+.mori-swatch .dots { display: flex; gap: 4px; }
+.mori-swatch .dots i { width: 14px; height: 14px; border-radius: 50%; display: block; box-shadow: 0 0 0 1px rgba(128,128,128,.35); }
+.mori-swatch.active { border-color: var(--primary); }
+.mori-accent-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.mori-accent-row input[type=color] { width: 48px; height: 40px; padding: 0; border: 0; background: none; cursor: pointer; }
+.mori-mini-btn { min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid rgba(128,128,128,.4); background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.mori-explore-btn { width: 100%; min-height: 48px; margin-top: 12px; border-radius: 12px; border: 1px dashed rgba(var(--primary-rgb), .5);
+  background: rgba(var(--primary-rgb), .08); color: var(--text-main); font: inherit; font-weight: 600; cursor: pointer; }
+.mori-sheet { position: fixed; inset: 0; z-index: 9000; background: rgba(0,0,0,.55); display: flex; align-items: flex-end; justify-content: center; }
+.mori-sheet.hidden { display: none; }
+.mori-sheet-body { width: 100%; max-width: 640px; max-height: 88vh; overflow: auto; background: var(--bg-color); color: var(--text-main);
+  border-radius: 18px 18px 0 0; padding: 16px 16px calc(20px + env(safe-area-inset-bottom)); }
+.mori-sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.mori-sheet-head h3 { margin: 0; }
+.mori-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.mori-row select, .mori-row input { flex: 1; min-height: 44px; border-radius: 10px; border: 1px solid rgba(128,128,128,.4); padding: 0 12px; background: var(--surface); color: var(--text-main); font: inherit; min-width: 0; }
+.mori-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.mori-list li button { width: 100%; text-align: left; min-height: 48px; padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(128,128,128,.3);
+  background: var(--surface); color: var(--text-main); font: inherit; cursor: pointer; display: flex; gap: 10px; align-items: center; }
+.mori-list img { width: 40px; height: 56px; object-fit: cover; border-radius: 6px; flex: none; }
+.mori-muted { color: var(--text-secondary); font-size: .85rem; }
+@media (min-width: 900px) { .mori-sheet { align-items: center; } .mori-sheet-body { border-radius: 18px; } .mori-theme-grid { grid-template-columns: repeat(6, 1fr); } }

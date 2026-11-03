@@ -1,0 +1,14 @@
+{
+  "name": "Mori AIXI",
+  "short_name": "Mori AIXI",
+  "description": "Pangunduh média universal — TikTok, Instagram, YouTube, Spotify, anime, komik jeung lianna.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1a13",
+  "theme_color": "#14231a",
+  "lang": "su",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
